@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Sayan Hosting</title>
+    <link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&family=Noto+Sans:wght@400;500;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#38e07b",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#122017",
+                        "card-dark": "#1c2620",
+                        "border-dark": "#3d5245",
+                        "subtle-text": "#9eb7a8",
+                    },
+                    fontFamily: {
+                        "display": ["Spline Sans", "sans-serif"],
+                        "body": ["Noto Sans", "sans-serif"],
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                    animation: {
+                        "fade-in": "fadeIn 0.5s ease-in-out",
+                        "slide-up": "slideUp 0.5s ease-out",
+                        "pulse-once": "pulse 0.5s ease-in-out",
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            "0%": { opacity: "0" },
+                            "100%": { opacity: "1" },
+                        },
+                        slideUp: {
+                            "0%": { transform: "translateY(20px)", opacity: "0" },
+                            "100%": { transform: "translateY(0)", opacity: "1" },
+                        },
+                        pulse: {
+                            "0%, 100%": { transform: "scale(1)" },
+                            "50%": { transform: "scale(1.05)" },
+                        },
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 50; align-items: center; justify-content: center; padding: 1rem; }
+        .modal.active { display: flex; }
+        .modal-content { background: #1c2620; border: 1px solid #3d5245; border-radius: 2rem; width: 100%; max-width: 450px; padding: 2rem; }
+        .tab-content.hidden { display: none; }
+        .toggle-slider { position: absolute; height: calc(100% - 8px); width: calc(33.33% - 4px); background: #38e07b; top: 4px; left: 4px; border-radius: 9999px; transition: transform 0.3s ease-in-out; z-index: 0; }
+        .mobile-menu { display: none; }
+        .mobile-menu.open { display: block; }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display antialiased text-slate-900 dark:text-white selection:bg-primary selection:text-background-dark">
+    <div class="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden">
+        <header class="sticky-nav w-full border-b border-solid border-b-[#29382f] bg-[#111714]/90">
+            <div class="px-4 md:px-10 py-3 max-w-[1200px] mx-auto flex items-center justify-between whitespace-nowrap">
+                <div class="flex items-center gap-4 text-white">
+                    <div class="size-8 text-primary">
+                        <svg class="w-full h-full" fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                            <path clip-rule="evenodd" d="M12.0799 24L4 19.2479L9.95537 8.75216L18.04 13.4961L18.0446 4H29.9554L29.96 13.4961L38.0446 8.75216L44 19.2479L35.92 24L44 28.7521L38.0446 39.2479L29.96 34.5039L29.9554 44H18.0446L18.04 34.5039L9.95537 39.2479L4 28.7521L12.0799 24Z" fill="currentColor" fill-rule="evenodd"></path>
+                        </svg>
+                    </div>
+                    <h2 class="text-white text-lg font-bold leading-tight tracking-[-0.015em]">sayan.store</h2>
+                </div>
+                
+                <div class="hidden md:flex flex-1 justify-end gap-8">
+                    <div class="flex items-center gap-9">
+                        <a class="text-white hover:text-primary transition-colors text-sm font-medium leading-normal" href="#">Home</a>
+                        <a class="text-primary text-sm font-bold leading-normal" href="#">Pricing</a>
+                        <a class="text-white hover:text-primary transition-colors text-sm font-medium leading-normal" href="#">Features</a>
+                        <a class="text-white hover:text-primary transition-colors text-sm font-medium leading-normal" href="#">Support</a>
+                    </div>
+                    <button class="flex cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-6 bg-primary text-[#111714] text-sm font-bold leading-normal tracking-[0.015em] hover:bg-white transition-colors">
+                        <span class="truncate">Client Area</span>
+                    </button>
+                </div>
+                
+                <div class="md:hidden text-white">
+                    <button id="mobile-menu-btn" class="p-2">
+                        <span class="material-symbols-outlined">menu</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div id="mobile-menu" class="mobile-menu md:hidden bg-[#111714]/95 border-t border-[#29382f]">
+                <div class="px-4 py-4 flex flex-col gap-4">
+                    <a class="text-white hover:text-primary transition-colors text-sm font-medium leading-normal" href="#">Home</a>
+                    <a class="text-primary text-sm font-bold leading-normal" href="#">Pricing</a>
+                    <a class="text-white hover:text-primary transition-colors text-sm font-medium leading-normal" href="#">Features</a>
+                    <a class="text-white hover:text-primary transition-colors text-sm font-medium leading-normal" href="#">Support</a>
+                    <button class="flex cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-6 bg-primary text-[#111714] text-sm font-bold leading-normal tracking-[0.015em] hover:bg-white transition-colors">
+                        <span class="truncate">Client Area</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="flex-1 flex flex-col items-center w-full max-w-[1200px] mx-auto px-4 md:px-10 pb-20 pt-6">
+<section class="py-4 text-center max-w-3xl">
+
+    <!-- Logo -->
+    <div class="flex justify-center mb-2">
+        <img 
+            src="https://sabir7718.is-a.dev/photos/sayan.jpg"
+            alt="Sayan Logo"
+            class="w-32 h-32 rounded-full border-4 border-primary object-cover"
+        >
+    </div>
+
+    <!-- Title -->
+    <h1 class="text-white text-4xl md:text-6xl font-black leading-tight tracking-[-0.033em] mb-3">
+        SAYAN X STORE <br/>
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-emerald-400">
+            ALL SERVICE
+        </span>
+    </h1>
+                <p class="text-subtle-text text-lg md:text-xl font-normal leading-relaxed">
+                    Ultra-low latency Bot Whatsapp, BUG APK, and Nodejs hosting with premium hardware.
+                </p>
+                <div class="flex flex-wrap justify-center gap-6 mt-10">
+                    <div class="flex items-center gap-2 text-sm text-white font-medium bg-[#29382f]/50 px-4 py-2 rounded-full border border-[#3d5245]">
+                        <span class="material-symbols-outlined text-primary text-[20px]">bolt</span> Instant Setup
+                    </div>
+                    <div class="flex items-center gap-2 text-sm text-white font-medium bg-[#29382f]/50 px-4 py-2 rounded-full border border-[#3d5245]">
+                        <span class="material-symbols-outlined text-primary text-[20px]">shield</span> DDoS Protection
+                    </div>
+                    <div class="flex items-center gap-2 text-sm text-white font-medium bg-[#29382f]/50 px-4 py-2 rounded-full border border-[#3d5245]">
+                        <span class="material-symbols-outlined text-primary text-[20px]">schedule</span> In Affordable Price
+                    </div>
+                </div>
+            </section>
+
+            <div class="tab-container flex justify-center w-full mb-12">
+                <div class="relative flex p-1 bg-[#1c2620] rounded-full border border-[#3d5245]">
+                    <div id="toggle-slider" class="toggle-slider"></div>
+                    <label class="cursor-pointer relative z-10 tab-label-container" data-tab="panel">
+                        <input checked="" class="peer sr-only" name="pricing-type" type="radio" value="panel" id="panel-tab"/>
+                        <div class="tab-label px-6 py-2.5 rounded-full text-sm font-bold text-white peer-checked:text-[#111714] transition-all duration-300">
+                            Panel Hosting
+                        </div>
+                    </label>
+                    <label class="cursor-pointer relative z-10 tab-label-container" data-tab="vps">
+                        <input class="peer sr-only" name="pricing-type" type="radio" value="vps" id="vps-tab"/>
+                        <div class="tab-label px-6 py-2.5 rounded-full text-sm font-bold text-subtle-text peer-checked:text-[#111714] transition-all duration-300">
+                            VPS Hosting
+                        </div>
+                    </label>
+                    <label class="cursor-pointer relative z-10 tab-label-container" data-tab="service">
+                        <input class="peer sr-only" name="pricing-type" type="radio" value="service" id="service-tab"/>
+                        <div class="tab-label px-6 py-2.5 rounded-full text-sm font-bold text-subtle-text peer-checked:text-[#111714] transition-all duration-300">
+                            Service
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <div id="panel-content" class="w-full tab-content">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <div class="pricing-card group relative flex flex-col gap-6 rounded-[2rem] border border-border-dark bg-card-dark p-6 hover:border-primary/50 transition-all duration-300">
+                        <div class="flex flex-col gap-2">
+                            <h3 class="text-white text-lg font-bold leading-tight">1GB Plan</h3>
+                            <div class="mt-2 flex flex-col">
+                                <span class="text-primary text-3xl font-black">₹20 / $0.24</span>
+                                <span class="text-subtle-text text-sm font-medium">per month</span>
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-3 flex-1">
+                            <div class="flex items-center gap-3 text-sm text-white">
+                                <span class="material-symbols-outlined text-primary text-[20px]">check_circle</span> 1GB DDR4 RAM
+                            </div>
+                            <div class="flex items-center gap-3 text-sm text-white">
+                                <span class="material-symbols-outlined text-primary text-[20px]">check_circle</span> 50% CPU Core
+                            </div>
+                        </div>
+                        <button class="order-btn w-full cursor-pointer items-center justify-center rounded-full h-9 px-3 bg-[#29382f] text-white text-sm font-bold group-hover:bg-primary group-hover:text-[#111714] transition-colors" 
+                                data-plan="1GB Plan" data-price="₹20 / $0.24" data-ram="1GB" data-cpu="50%" data-storage="5GB" data-database="1">
+                            Order Now
+                        </button>
+                    </div>
+
+                    <div class="pricing-card group relative flex flex-col gap-6 rounded-[2rem] border-2 border-primary bg-card-dark p-6 transform md:-translate-y-4">
+                        <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary text-[#111714] px-4 py-1 rounded-full text-xs font-bold uppercase">Popular</div>
+                        <div class="flex flex-col gap-2">
+                            <h3 class="text-white text-lg font-bold leading-tight">4GB Plan</h3>
+                            <div class="mt-2 flex flex-col">
+                                <span class="text-primary text-3xl font-black">₹40 / $0.48</span>
+                                <span class="text-subtle-text text-sm font-medium">per month</span>
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-3 flex-1">
+                            <div class="flex items-center gap-3 text-sm text-white">
+                                <span class="material-symbols-outlined text-primary text-[20px]">check_circle</span> 4GB DDR4 RAM
+                            </div>
+                            <div class="flex items-center gap-3 text-sm text-white">
+                                <span class="material-symbols-outlined text-primary text-[20px]">check_circle</span> 200% CPU Core
+                            </div>
+                        </div>
+                        <button class="order-btn w-full cursor-pointer items-center justify-center rounded-full h-9 px-3 bg-primary text-[#111714] text-sm font-bold" 
+                                data-plan="4GB Plan" data-price="₹40 / $0.48" data-ram="4GB" data-cpu="200%" data-storage="20GB" data-database="5">
+                            Order Now
+                        </button>
+                    </div>
+
+                    <div class="pricing-card group relative flex flex-col gap-6 rounded-[2rem] border border-border-dark bg-card-dark p-6 hover:border-primary/50 transition-all duration-300">
+                        <div class="flex flex-col gap-2">
+                            <h3 class="text-white text-lg font-bold leading-tight">8GB Plan</h3>
+                            <div class="mt-2 flex flex-col">
+                                <span class="text-primary text-3xl font-black">₹80 / $0.97</span>
+                                <span class="text-subtle-text text-sm font-medium">per month</span>
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-3 flex-1">
+                            <div class="flex items-center gap-3 text-sm text-white">
+                                <span class="material-symbols-outlined text-primary text-[20px]">check_circle</span> 8GB DDR4 RAM
+                            </div>
+                            <div class="flex items-center gap-3 text-sm text-white">
+                                <span class="material-symbols-outlined text-primary text-[20px]">check_circle</span> 400% CPU Core
+                            </div>
+                        </div>
+                        <button class="order-btn w-full cursor-pointer items-center justify-center rounded-full h-9 px-3 bg-[#29382f] text-white text-sm font-bold group-hover:bg-primary group-hover:text-[#111714] transition-colors" 
+                                data-plan="8GB Plan" data-price="₹80 / $0.97" data-ram="8GB" data-cpu="400%" data-storage="40GB" data-database="Inf">
+                            Order Now
+                        </button>
+                    </div>
+
+                    <div class="pricing-card group relative flex flex-col gap-6 rounded-[2rem] border-2 border-yellow-500 bg-card-dark p-6">
+                        <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-yellow-500 text-[#111714] px-4 py-1 rounded-full text-xs font-bold uppercase">Admin</div>
+                        <div class="flex flex-col gap-2">
+                            <h3 class="text-white text-lg font-bold leading-tight">Admin Panel</h3>
+                            <div class="mt-2 flex flex-col">
+                                <span class="text-yellow-500 text-3xl font-black">₹1500 / $18.00</span>
+                                <span class="text-subtle-text text-sm font-medium">8 month</span>
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-3 flex-1">
+                            <div class="flex items-center gap-3 text-sm text-white">
+                                <span class="material-symbols-outlined text-yellow-500 text-[20px]">check_circle</span> Full Node Access
+                            </div>
+                        </div>
+                        <button class="order-btn w-full cursor-pointer items-center justify-center rounded-full h-9 px-3 bg-yellow-500 text-[#111714] text-sm font-bold" 
+                                data-plan="Admin Panel" data-price="₹1500 / $18.00" data-ram="Full" data-cpu="Full" data-storage="Full" data-database="Full">
+                            Order Now
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="vps-content" class="w-full tab-content hidden">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="pricing-card group flex flex-col gap-6 rounded-[2rem] border border-border-dark bg-[#161d19] p-8">
+                        <div class="flex justify-between items-start">
+                            <div><h3 class="text-white text-xl font-bold">1GB 1 Core</h3></div>
+                            <div class="text-right">
+                                <span class="block text-primary text-2xl font-black">₹35 / $0.60</span>
+                            </div>
+                        </div>
+                        <button class="vps-order-btn w-full rounded-full h-10 border border-[#3d5245] text-white hover:text-primary hover:border-primary transition-colors" 
+                                data-plan="1GB VPS" data-price="₹35 / $0.60" data-cpu="1 vCPU" data-ram="1GB" data-storage="25GB" data-bandwidth="1TB">
+                            Order Now
+                        </button>
+                    </div>
+                    <div class="pricing-card group flex flex-col gap-6 rounded-[2rem] border border-border-dark bg-[#161d19] p-8">
+                        <div class="flex justify-between items-start">
+                            <div><h3 class="text-white text-xl font-bold">4GB 2 Core</h3></div>
+                            <div class="text-right">
+                                <span class="block text-primary text-2xl font-black">₹100 / $1.2</span>
+                            </div>
+                        </div>
+                        <button class="vps-order-btn w-full rounded-full h-10 border border-[#3d5245] text-white hover:text-primary hover:border-primary transition-colors" 
+                                data-plan="4GB VPS" data-price="₹100 / $1.2" data-cpu="2 vCPU" data-ram="4GB" data-storage="80GB" data-bandwidth="3TB">
+                            Order Now
+                        </button>
+                    </div>
+                    <div class="pricing-card group flex flex-col gap-6 rounded-[2rem] border border-border-dark bg-[#161d19] p-8">
+                        <div class="flex justify-between items-start">
+                            <div><h3 class="text-white text-xl font-bold">16GB 8 Core</h3></div>
+                            <div class="text-right">
+                                <span class="block text-primary text-2xl font-black">₹200 / $2.4</span>
+                            </div>
+                        </div>
+                        <button class="vps-order-btn w-full rounded-full h-10 border border-[#3d5245] text-white hover:text-primary hover:border-primary transition-colors" 
+                                data-plan="16GB VPS" data-price="₹200 / $2.4" data-cpu="8 vCPU" data-ram="16GB" data-storage="120GB" data-bandwidth="8TB">
+                            Order Now
+                        </button>
+                        </button>
+                    </div>
+                    <div class="pricing-card group flex flex-col gap-6 rounded-[2rem] border border-border-dark bg-[#161d19] p-8">
+                        <div class="flex justify-between items-start">
+                            <div><h3 class="text-white text-xl font-bold">32GB 8 Core</h3></div>
+                            <div class="text-right">
+                                <span class="block text-primary text-2xl font-black">₹400 / $4.8</span>
+                            </div>
+                        </div>
+                        <button class="vps-order-btn w-full rounded-full h-10 border border-[#3d5245] text-white hover:text-primary hover:border-primary transition-colors" 
+                                data-plan="32GB VPS" data-price="₹400 / $4.8" data-cpu="8 vCPU" data-ram="32GB" data-storage="120GB" data-bandwidth="8TB">
+                            Order Now
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="service-content" class="w-full tab-content hidden">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
+                    <div class="pricing-card group flex flex-col gap-6 rounded-[2rem] border border-border-dark bg-card-dark p-6">
+                        <h3 class="text-white text-lg font-bold">Bugbot Service</h3>
+                        <span class="text-primary text-3xl font-black">₹500 / $3.00</span>
+                        <button class="service-order-btn w-full rounded-full h-9 bg-[#29382f] text-white hover:bg-primary hover:text-black transition-colors"
+                                data-service="Bugbot" data-price="₹500 / $6.00">Order Now</button>
+                    </div>
+                    <div class="pricing-card group flex flex-col gap-6 rounded-[2rem] border border-border-dark bg-card-dark p-6">
+                        <h3 class="text-white text-lg font-bold">MD Bot Service</h3>
+                        <span class="text-primary text-3xl font-black">₹250 / $3.00</span>
+                        <button class="service-order-btn w-full rounded-full h-9 bg-[#29382f] text-white hover:bg-primary hover:text-black transition-colors"
+                                data-service="MD Bot" data-price="₹250 / $6.00">Order Now</button>
+                    </div>
+                    <div class="pricing-card group flex flex-col gap-6 rounded-[2rem] border border-border-dark bg-card-dark p-6">
+                        <h3 class="text-white text-lg font-bold">SAYAN X BUG APK</h3>
+                        <span class="text-primary text-3xl font-black">₹250 / $3.00</span>
+                        <button class="service-order-btn w-full rounded-full h-9 bg-[#29382f] text-white hover:bg-primary hover:text-black transition-colors"
+                                data-service="BUG APK" data-price="₹250 / $3.00">Order Now</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="border-t border-[#29382f] bg-[#111714] py-12 px-4 md:px-10">
+            <div class="max-w-[1200px] mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+                <div class="flex items-center gap-2 text-white">
+                    <span class="font-bold text-lg">sayan.store</span>
+                </div>
+                <div class="text-subtle-text text-sm text-center md:text-right">
+                    <p>© 2026 SayanStore. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <div id="order-modal" class="modal">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-white">Checkout</h3>
+                <button id="close-modal" class="text-subtle-text hover:text-white"><span class="material-symbols-outlined">close</span></button>
+            </div>
+            <div id="order-summary" class="mb-6 p-4 bg-[#111714] rounded-xl border border-[#3d5245] text-sm text-subtle-text"></div>
+            <div class="grid grid-cols-2 gap-4">
+                <button id="whatsapp-order" class="flex flex-col items-center gap-2 p-3 bg-[#25D366] text-white rounded-xl">WhatsApp</button>
+                <button id="telegram-order" class="flex flex-col items-center gap-2 p-3 bg-[#0088cc] text-white rounded-xl">Telegram</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const tabs = { 'panel': 'panel-content', 'vps': 'vps-content', 'service': 'service-content' };
+        const slider = document.getElementById('toggle-slider');
+        const modal = document.getElementById('order-modal');
+        const summary = document.getElementById('order-summary');
+        const whatsappNumber = '923442619602';
+        const telegramUsername = 'zoroxbug';
+
+        document.querySelectorAll('.tab-label-container').forEach(label => {
+            label.addEventListener('click', () => {
+                const tab = label.dataset.tab;
+                Object.values(tabs).forEach(id => document.getElementById(id).classList.add('hidden'));
+                document.getElementById(tabs[tab]).classList.remove('hidden');
+                slider.style.transform = `translateX(${tab === 'panel' ? '0' : tab === 'vps' ? '100%' : '200%'})`;
+            });
+        });
+
+        const openOrder = (msg, html) => {
+            summary.innerHTML = html;
+            modal.setAttribute('data-msg', msg);
+            modal.classList.add('active');
+        };
+
+        document.querySelectorAll('.order-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const d = btn.dataset;
+                const msg = `Order: ${d.plan}\nPrice: ${d.price}\nRAM: ${d.ram}\nCPU: ${d.cpu}`;
+                openOrder(msg, `<p><b>Plan:</b> ${d.plan}</p><p><b>Price:</b> ${d.price}</p>`);
+            });
+        });
+
+        document.querySelectorAll('.vps-order-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const d = btn.dataset;
+                const msg = `Order: VPS ${d.plan}\nPrice: ${d.price}\nSpecs: ${d.cpu}, ${d.ram}`;
+                openOrder(msg, `<p><b>VPS:</b> ${d.plan}</p><p><b>Price:</b> ${d.price}</p>`);
+            });
+        });
+
+        document.querySelectorAll('.service-order-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const d = btn.dataset;
+                const msg = `Order Service: ${d.service}\nPrice: ${d.price}`;
+                openOrder(msg, `<p><b>Service:</b> ${d.service}</p><p><b>Price:</b> ${d.price}</p>`);
+            });
+        });
+
+        document.getElementById('close-modal').onclick = () => modal.classList.remove('active');
+        document.getElementById('whatsapp-order').onclick = () => window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(modal.getAttribute('data-msg'))}`);
+        document.getElementById('telegram-order').onclick = () => window.open(`https://t.me/${telegramUsername}?text=${encodeURIComponent(modal.getAttribute('data-msg'))}`);
+        document.getElementById('mobile-menu-btn').onclick = () => document.getElementById('mobile-menu').classList.toggle('open');
+    });
+    </script>
+</body>
+</html>
